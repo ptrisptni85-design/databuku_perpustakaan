@@ -10,25 +10,38 @@ class BookController extends Controller
     // GET /api/books
     public function index()
     {
-        return Book::all();
+        return response()->json([
+            'message' => 'Daftar buku',
+            'data' => Book::all()
+        ], 200);
     }
 
     // POST /api/books
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'judul' => 'required',
             'penulis' => 'required',
             'tahun' => 'required|integer',
         ]);
 
-        return Book::create($request->all());
+        $book = Book::create($validated);
+
+        return response()->json([
+            'message' => 'Data berhasil ditambahkan',
+            'data' => $book
+        ], 201);
     }
 
     // GET /api/books/{id}
     public function show($id)
     {
-        return Book::findOrFail($id);
+        $book = Book::findOrFail($id);
+
+        return response()->json([
+            'message' => 'Detail data buku',
+            'data' => $book
+        ], 200);
     }
 
     // PUT /api/books/{id}
@@ -38,31 +51,20 @@ class BookController extends Controller
 
         $book->update($request->all());
 
-        return $book;
+        return response()->json([
+            'message' => 'Data buku berhasil diupdate',
+            'data' => $book
+        ], 200);
     }
 
     // DELETE /api/books/{id}
     public function destroy($id)
     {
-        Book::findOrFail($id)->delete();
+        $book = Book::findOrFail($id);
+        $book->delete();
 
         return response()->json([
             'message' => 'Data berhasil dihapus'
-        ]);
-
-        return response()->json([
-            'message' => 'Data berhasil ditambahkan',
-            'data' => $book
-        ], 201);
-
-        return response()->json([
-        'message' => 'Detail data buku',
-        'data' => $book
-        ], 200);
-
-        return response()->json([
-        'message' => 'Data buku berhasil diupdate',
-        'data' => $book
         ], 200);
     }
 }
