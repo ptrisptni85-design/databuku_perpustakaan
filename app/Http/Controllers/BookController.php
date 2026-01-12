@@ -10,23 +10,22 @@ class BookController extends Controller
     // GET /api/books
     public function index()
     {
-        $books = Book::all();
         return response()->json([
-            'success' => true,
-            'data' => $books
-        ]);
+            'message' => 'Daftar buku',
+            'data' => Book::all()
+        ], 200);
     }
 
     // POST /api/books
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'judul' => 'required',
             'penulis' => 'required',
             'tahun' => 'required|integer',
         ]);
 
-        $book = Book::create($request->all());
+        $book = Book::create($validated);
 
         return response()->json([
             'message' => 'Data berhasil ditambahkan',
@@ -47,9 +46,9 @@ class BookController extends Controller
         }
 
         return response()->json([
-            'success' => true,
+            'message' => 'Detail data buku',
             'data' => $book
-        ]);
+        ], 200);
     }
 
     // PUT /api/books/{id}
@@ -75,7 +74,7 @@ class BookController extends Controller
         return response()->json([
             'message' => 'Data buku berhasil diupdate',
             'data' => $book
-        ]);
+        ], 200);
     }
 
     // DELETE /api/books/{id}
@@ -95,6 +94,6 @@ class BookController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data berhasil dihapus'
-        ]);
+        ], 200);
     }
 }
