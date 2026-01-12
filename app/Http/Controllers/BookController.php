@@ -10,7 +10,11 @@ class BookController extends Controller
     // GET /api/books
     public function index()
     {
-        return Book::all();
+        $books = Book::all();
+        return response()->json([
+            'success' => true,
+            'data' => $books
+        ]);
     }
 
     // POST /api/books
@@ -22,47 +26,75 @@ class BookController extends Controller
             'tahun' => 'required|integer',
         ]);
 
-        return Book::create($request->all());
-    }
-
-    // GET /api/books/{id}
-    public function show($id)
-    {
-        return Book::findOrFail($id);
-    }
-
-    // PUT /api/books/{id}
-    public function update(Request $request, $id)
-    {
-        $book = Book::findOrFail($id);
-
-        $book->update($request->all());
-
-        return $book;
-    }
-
-    // DELETE /api/books/{id}
-    public function destroy($id)
-    {
-        Book::findOrFail($id)->delete();
-
-        return response()->json([
-            'message' => 'Data berhasil dihapus'
-        ]);
+        $book = Book::create($request->all());
 
         return response()->json([
             'message' => 'Data berhasil ditambahkan',
             'data' => $book
         ], 201);
+    }
+
+    // GET /api/books/{id}
+    public function show($id)
+    {
+        $book = Book::find($id);
+
+        if (!$book) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Buku tidak ditemukan'
+            ], 404);
+        }
 
         return response()->json([
-        'message' => 'Detail data buku',
-        'data' => $book
-        ], 200);
+            'success' => true,
+            'data' => $book
+        ]);
+    }
+
+    // PUT /api/books/{id}
+    public function update(Request $request, $id)
+    {
+        $book = Book::find($id);
+
+        if (!$book) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Buku tidak ditemukan'
+            ], 404);
+        }
+
+        $request->validate([
+            'judul' => 'sometimes|required',
+            'penulis' => 'sometimes|required',
+            'tahun' => 'sometimes|required|integer',
+        ]);
+
+        $book->update($request->all());
 
         return response()->json([
-        'message' => 'Data buku berhasil diupdate',
-        'data' => $book
-        ], 200);
+            'message' => 'Data buku berhasil diupdate',
+            'data' => $book
+        ]);
+    }
+
+    // DELETE /api/books/{id}
+    public function destroy($id)
+    {
+        $book = Book::find($id);
+
+        if (!$book) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Buku tidak ditemukan'
+            ], 404);
+        }
+
+        $book->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil dihapus'
+        ]);
     }
 }

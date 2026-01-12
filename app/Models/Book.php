@@ -10,8 +10,17 @@ class Book extends Model
     use HasFactory;
 
     protected $fillable = [
-        'judul',
-        'penulis',
-        'tahun'
-    ];
+    'judul',
+    'penulis',
+    'tahun'
+
+];
+
+    protected $table = 'books';
+
+
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
 }
